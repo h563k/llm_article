@@ -1,0 +1,13 @@
+# pip install -r requirements.txt --index-url https://mirrors.huaweicloud.com/repository/pypi/simple
+openai
+backoff
+httpx[socks]
+tenacity
+docx2txt
+unstructured
+python-docx
+pandas
+openpyxl
+bert-score
+pywin32
+rouge
