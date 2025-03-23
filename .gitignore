@@ -3,3 +3,4 @@ bert-base-chinese
 test
 config
 logs
+__pycache__

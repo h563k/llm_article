@@ -1,5 +1,6 @@
 import re
 import os
+from fuzzywuzzy import fuzz
 import pandas as pd
 from functionals.save_data import DatabaseManager
 from functionals.llm_api import openai_chat
@@ -294,7 +295,7 @@ def aggregation(template, model, database_manager):
         # 摘要统计
         table = pd.concat([table, pd.DataFrame.from_dict(
             temp, orient='index').T], ignore_index=True)
-        sql = f"select * from compare_count where file_name='{file_name}' and content_tpye like 'Content%' order by id"
+        sql = f"select * from compare_count where file_name='{file_name}' and model ='{model}' and content_tpye like 'Content%' order by id"
         Content_list = database_manager.custom(sql)
         print(f'正在统计{file_name}的内容')
         content_temp = []
@@ -302,7 +303,7 @@ def aggregation(template, model, database_manager):
             content_temp.extend(content[5].split('\n'))
         count_dict['统计类型'] = '正文'
         count_dict['总长度'] = Content_len
-        sql = f"select * from eval_count where file_name='{file_name}' and content_tpye like 'Content%' order by id"
+        sql = f"select * from eval_count where file_name='{file_name}' and model ='{model}' and content_tpye like 'Content%' order by id"
         Content_eval = database_manager.custom(sql)
         rouge_l, bert_score = eval_count(Content_eval)
         count_dict['rougel'] = rouge_l
@@ -377,7 +378,7 @@ def reference_count(template, model, database_manager):
             temp = [x for x in temp if '参考文献' not in x]
             Reference_count = len(temp) 
         Reference_len = sum([len(x[3]) for x in Reference_list])
-        sql = f"select * from eval_count where file_name='{file_name}' and content_tpye like 'Reference%' order by id"
+        sql = f"select * from eval_count where file_name='{file_name}' and model ='{model}' and content_tpye like 'Reference%' order by id"
         Reference_evals = database_manager.custom(sql)
         rouge_l, bert_score = eval_count(Reference_evals)
         count_dict = {'文件名': file_name,
@@ -397,7 +398,7 @@ def reference_count(template, model, database_manager):
                       'rougel': rouge_l,
                       'bert_score': bert_score,
                       }
-        sql = f"select * from compare_count where file_name='{file_name}' and content_tpye like 'Reference%' order by id"
+        sql = f"select * from compare_count where file_name='{file_name}' and model ='{model}' and content_tpye like 'Reference%' order by id"
         reference_list = database_manager.custom(sql)
         reference_temp = []
         for i, reference in enumerate(reference_list):
@@ -408,10 +409,20 @@ def reference_count(template, model, database_manager):
             if not reference or reference == '错误类型' or reference.startswith('---') or '无错误' in reference:
                 continue
             if reference in count_dict.keys():
-                count_dict[reference] += 1
+                count_dict[reference] += 1                
             else:
-                print(f'{file_name}的参考文献统计结果有误')
-                print(reference_temp[i])
+                score = 0
+                match_key = ''
+                for key in count_dict.keys():
+                    temp_score = fuzz.ratio(key, reference)
+                    if temp_score > score:
+                        score = temp_score
+                        match_key = key
+                if score > 70:
+                    count_dict[match_key] += 1
+                else:
+                    print(f'{file_name}的参考文献统计结果有误')
+                    print(reference_temp[i])
         table = pd.concat([table, pd.DataFrame.from_dict(
             count_dict, orient='index').T], ignore_index=True)
     table.to_excel(f'data/result/{model}_reference.xlsx', index=False)
@@ -431,5 +442,5 @@ def SingleCount(template, model):
     database_manager = DatabaseManager()
     file_list = database_manager.get_documents_file_names()
     eval_llm(template, model, database_manager, file_list)
-    aggregation(template, model, database_manager)
-    reference_count(template, model, database_manager)
+    # aggregation(template, model, database_manager)
+    # reference_count(template, model, database_manager)

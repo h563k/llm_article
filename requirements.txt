@@ -11,3 +11,5 @@ openpyxl
 bert-score
 pywin32
 rouge
+fuzzywuzzy
+python-Levenshtein
