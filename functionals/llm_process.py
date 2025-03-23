@@ -124,6 +124,7 @@ def refine_llm(openai_template, model, database_manager, file_list):
 
 
 def eval_llm(openai_template, model, database_manager, file_list):
+    print(f'大模型评价工具开始, 本次采用模型为{model}')
     for file_name in file_list:
         sql = f"select * from reference_cache where file_name = '{file_name}' and template = '{openai_template}' and model = '{model}' order by id"
         reference_cache = database_manager.custom(sql)
