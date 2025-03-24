@@ -5,6 +5,7 @@ import pandas as pd
 from functionals.save_data import DatabaseManager
 from functionals.llm_api import openai_chat
 from functionals.metric import eval
+from functionals.file_list import get_file_list
 from functionals.promot_template import *
 
 # TODO增加一个全文英文提取promot
@@ -15,7 +16,7 @@ def summarize_llm():
     openai_template = 'qwen'
     model = 'deepseek-v3'
     database_manager = DatabaseManager()
-    file_list = database_manager.get_documents_file_names()
+    file_list = get_file_list()
     for file_name in file_list:
         if database_manager.get_summarize(file_name):
             print(f'{file_name}已存在, 跳过总结')
@@ -125,12 +126,12 @@ def refine_llm(openai_template, model, database_manager, file_list):
 
 
 def eval_llm(openai_template, model, database_manager, file_list):
-    print(f'大模型评价工具开始, 本次采用模型为{model}')
     for file_name in file_list:
         sql = f"select * from reference_cache where file_name = '{file_name}' and template = '{openai_template}' and model = '{model}' order by id"
         reference_cache = database_manager.custom(sql)
         for i, reference_cache_item in enumerate(reference_cache):
             _, file_name, template, model, content_tpye, content, reference, _ = reference_cache_item
+            print(f'{file_name}的第{i}段内容已开始评价,模型为{model},类型为{content_tpye}')
             if not database_manager.get_eval_count(file_name, openai_template, model, content_tpye):
                 eval_scores = eval(reference, content)
                 database_manager.save_eval_count(
@@ -253,13 +254,15 @@ def eval_count(contents):
 def aggregation(template, model, database_manager):
     table = pd.DataFrame()
     abstract_df = pd.DataFrame()
-    file_list = database_manager.get_documents_file_names()
+    file_list = get_file_list()
     for file_name in file_list:
         Abstract_list = database_manager.get_document(
             file_name, 'Abstract_Chinese')
         Abstract_len = sum([len(x[3]) for x in Abstract_list])
         Abstract_evals = database_manager.get_eval_count(
             file_name, template, model, 'Abstract_Chinese')
+        if not Abstract_evals:
+            print(f'正在统计{file_name}的中文摘要,摘要为空')
         rouge_l, bert_score = eval_count(Abstract_evals)
         Content_list = database_manager.get_document(file_name, 'Content')
         Content_len = sum([len(x[3]) for x in Content_list])
@@ -365,7 +368,7 @@ def aggregation(template, model, database_manager):
 def reference_count(template, model, database_manager):
     print(f'正在统计{model}的参考文献')
     table = pd.DataFrame()
-    file_list = database_manager.get_documents_file_names()
+    file_list = get_file_list()
     for file_name in file_list:
         Reference_list = database_manager.get_document(file_name, 'Reference')
         print(model, file_name)
@@ -431,7 +434,7 @@ def reference_count(template, model, database_manager):
 
 def SingleProcess(template, model):
     database_manager = DatabaseManager()
-    file_list = database_manager.get_documents_file_names()
+    file_list = get_file_list()
     # 第三步逐步处理每一个片段
     refine_llm(template, model, database_manager, file_list)
     # 第四步 统计
@@ -440,7 +443,10 @@ def SingleProcess(template, model):
 
 def SingleCount(template, model):
     database_manager = DatabaseManager()
-    file_list = database_manager.get_documents_file_names()
+    file_list = get_file_list()
     eval_llm(template, model, database_manager, file_list)
-    # aggregation(template, model, database_manager)
-    # reference_count(template, model, database_manager)
+
+def SingleAggregation(template, model):
+    database_manager = DatabaseManager()
+    aggregation(template, model, database_manager)
+    reference_count(template, model, database_manager)

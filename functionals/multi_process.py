@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import multiprocessing
 from functionals.llm_process import SingleProcess
+from functionals.llm_process import SingleCount
+
 
 def merge_files(file_list):
     # 初始化一个空的DataFrame
@@ -34,6 +36,8 @@ def merge_excel_files(directory, output_file):
     reference.to_excel(f"{output_file}/reference.xlsx", index=False)
     abstract.to_excel(f"{output_file}/abstract.xlsx", index=False)
     content.to_excel(f"{output_file}/content.xlsx", index=False)
+
+
 def process_task(template_model):
     template, model = template_model
     # 在进程内部初始化 SingleProcess
@@ -47,7 +51,16 @@ def multi_process_template_model(template_model_list, num_processes=None):
     with multiprocessing.Pool(processes=num_processes) as pool:
         pool.map(process_task, template_model_list)
 
-    
+
+def eval_task(template_model):
+    template, model = template_model
+    # 在进程内部初始化 SingleProcess
+    SingleCount(template, model)
 
 
+def multi_process_template_eval(template_model_list, num_processes=None):
+    if num_processes is None:
+        num_processes = multiprocessing.cpu_count()
 
+    with multiprocessing.Pool(processes=num_processes) as pool:
+        pool.map(eval_task, template_model_list)
