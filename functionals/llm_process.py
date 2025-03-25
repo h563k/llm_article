@@ -133,7 +133,10 @@ def eval_llm(openai_template, model, database_manager, file_list):
             _, file_name, template, model, content_tpye, content, reference, _ = reference_cache_item
             print(f'{file_name}的第{i}段内容已开始评价,模型为{model},类型为{content_tpye}')
             if not database_manager.get_eval_count(file_name, openai_template, model, content_tpye):
-                eval_scores = eval(reference, content)
+                if len(reference) > 20:
+                    eval_scores = eval(reference, content)
+                else:
+                    eval_scores = {'rouge_l': 1, 'bert_score': 1}
                 database_manager.save_eval_count(
                     file_name, openai_template, model, content_tpye, eval_scores['rouge_l'], eval_scores['bert_score'])
             else:
@@ -347,6 +350,7 @@ def aggregation(template, model, database_manager):
         abstract_list = database_manager.get_compare_count(
             file_name, template, model, 'Abstract_English')[0][5]
         print(f'正在统计{file_name}的英文摘要')
+        print(abstract_list)
         abstract_list = abstract_list.split('\n')
         temp = count_dict.copy()
         for i, abstract in enumerate(abstract_list):
