@@ -33,6 +33,10 @@ def merge_excel_files(directory, output_file):
     reference = merge_files(reference)
     abstract = merge_files(abstract)
     content = merge_files(content)
+    if os.path.exists(f"{output_file}/reference.xlsx"):
+        os.remove(f"{output_file}/reference.xlsx")
+        os.remove(f"{output_file}/abstract.xlsx")
+        os.remove(f"{output_file}/content.xlsx")
     reference.to_excel(f"{output_file}/reference.xlsx", index=False)
     abstract.to_excel(f"{output_file}/abstract.xlsx", index=False)
     content.to_excel(f"{output_file}/content.xlsx", index=False)
