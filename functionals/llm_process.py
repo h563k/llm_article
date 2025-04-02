@@ -181,6 +181,7 @@ where content_tpye like 'Content%'
 and model = '{model}' and file_name = '{file_name}' order by id"""
         content_list = database_manager.custom(sql)
         for i, content in enumerate(content_list):
+            content =content[6]
             if len(content) < 20:
                 print(f'{file_name}的第{i}段长度过短, 跳过处理')
                 continue
@@ -316,6 +317,8 @@ def aggregation(template, model, database_manager):
         count_dict['bert_score'] = bert_score
         temp = count_dict.copy()
         for i, content in enumerate(content_temp):
+            if len(content) < 20:
+                continue
             content = clean_data(content, count_dict)
             if content == '错误类型' or content.startswith('---'):
                 continue

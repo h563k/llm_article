@@ -4,3 +4,4 @@ test
 config
 logs
 __pycache__
+*.jpg

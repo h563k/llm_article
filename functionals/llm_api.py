@@ -128,7 +128,7 @@ def env_init() -> None:
 #     return response_list
 
 
-@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(2))
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(0))
 @log_to_file
 def openai_chat(system_prompt, prompt, openai_template, model):
     env_init()
