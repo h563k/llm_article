@@ -1,4 +1,5 @@
 import os
+import shutil
 from functionals.system_config import ModelConfig
 
 
@@ -10,6 +11,12 @@ def ensure_output_dir():
         os.makedirs(output_dir)
     return output_dir
 
+def output_clean():
+    config = ModelConfig()
+    output_dir = os.path.join(config.file_path, 'plot', 'output')
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+        os.makedirs(output_dir)
 
 def get_output_path(filename):
     """获取输出文件的完整路径"""

@@ -259,6 +259,7 @@ def aggregation(template, model, database_manager):
     table = pd.DataFrame()
     abstract_df = pd.DataFrame()
     file_list = get_file_list()
+    error_log = []
     for file_name in file_list:
         Abstract_list = database_manager.get_document(
             file_name, 'Abstract_Chinese')
@@ -297,8 +298,7 @@ def aggregation(template, model, database_manager):
             if abstract in temp.keys():
                 temp[abstract] += 1
             else:
-                print(f'{file_name}的摘要统计结果有误')
-                print(abstract_list[i])
+                error_log.append([f'{file_name}的摘要统计结果有误', abstract_list[i]])
         # 摘要统计
         table = pd.concat([table, pd.DataFrame.from_dict(
             temp, orient='index').T], ignore_index=True)
@@ -342,6 +342,7 @@ def aggregation(template, model, database_manager):
                       '句式错误': 0,
                       '语法错误': 0,
                       '拼写词汇错误': 0,
+                      '标点符号错误': 0,
                       '术语使用错误': 0,
                       '格式规范错误': 0,
                       '数字单位错误': 0,
@@ -367,6 +368,10 @@ def aggregation(template, model, database_manager):
                 print(abstract_list[i])
         abstract_df = pd.concat([abstract_df, pd.DataFrame.from_dict(
             temp, orient='index').T], ignore_index=True)
+    if error_log:
+        with open('logs/error_content.txt', 'a') as f:
+            for error in error_log:
+                f.write(f'{error[0]}\n{error[1]}\n')
     table.to_excel(f'data/result/{model}_content.xlsx', index=False)
     abstract_df.to_excel(f'data/result/{model}_abstract.xlsx', index=False)
 

@@ -9,7 +9,7 @@ from plot.plotting_boxplots import plot_boxplots
 from plot.plotting_radar import plot_radar
 from plot.plotting_scores import plot_scores
 from plot.plotting_multiples import plot_small_multiples
-from plot.utils import ensure_output_dir
+from plot.utils import ensure_output_dir, output_clean
 
 
 def plot_all_charts():
@@ -24,6 +24,7 @@ def plot_all_charts():
 
         # 确保输出目录存在
         output_dir = ensure_output_dir()
+        output_clean()
         print(f"图表将保存到目录: {output_dir}")
 
         # 读取数据
@@ -45,13 +46,13 @@ def plot_all_charts():
 
             print(f"准备{section}部分的雷达图数据...")
             radar_df, radar_error_types = prepare_radar_data(df, section)
-            print(f"雷达图数据准备完成，包含错误类型: {radar_df}")
+            # print(f"雷达图数据准备完成，包含错误类型: {radar_df}")
 
             print(f"准备{section}部分的分数数据...")
             score_df = prepare_score_data(df, section)
 
-            # print(f"绘制{section}部分的箱体图...")
-            # plot_boxplots(error_df, error_types, section)
+            print(f"绘制{section}部分的箱体图...")
+            plot_boxplots(error_df, error_types, section)
 
             print(f"绘制{section}部分的雷达图...")
             plot_radar(radar_df, radar_error_types, section)
@@ -59,8 +60,8 @@ def plot_all_charts():
             # print(f"绘制{section}部分的分数散点图...")
             # plot_scores(score_df, section)
 
-            # print(f"绘制{section}部分的小倍数图...")
-            # plot_small_multiples(score_df, section)
+            print(f"绘制{section}部分的小倍数图...")
+            plot_small_multiples(score_df, section)
 
             print(f"{section}部分的图表已生成完毕")
     
