@@ -16,13 +16,10 @@ def plot_scores(score_df, section, model_list):
         print(f"警告: {get_label(section)}部分没有足够的数据绘制分数图")
         return
 
-    # 获取模型列表
-    models = score_df['模型'].unique()
-
     # 如果模型太多，分成两个图
-    max_models_per_chart = 6
-    model_groups = [models[i:i+max_models_per_chart]
-                    for i in range(0, len(models), max_models_per_chart)]
+    max_models_per_chart = 4
+    model_groups = [model_list[i:i+max_models_per_chart]
+                    for i in range(0, len(model_list), max_models_per_chart)]
 
     for group_idx, model_group in enumerate(model_groups):
         # 创建画布 (改进布局)

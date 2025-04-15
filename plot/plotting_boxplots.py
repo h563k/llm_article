@@ -24,7 +24,7 @@ def plot_boxplots(error_df, error_types, section, model_list):
         group_df = error_df[error_df['模型'].isin(model_group)]
         # 为每种错误类型创建一个子图
         fig, axes = plt.subplots(
-            len(error_types), 1, figsize=(14, 8 * len(error_types)))
+            len(error_types), 1, figsize=(14, 6 * len(error_types)))
         if len(error_types) == 1:
             axes = [axes]
 

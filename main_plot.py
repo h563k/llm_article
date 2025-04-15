@@ -65,15 +65,15 @@ def plot_all_charts(model_list):
             score_df = prepare_score_data(df, section)
 
             print(f"绘制{section}部分的箱体图...")
-            # plot_boxplots(error_df, error_types, section, model_list)
+            plot_boxplots(error_df, error_types, section, model_list)
 
             print(f"绘制{section}部分的雷达图...")
-            plot_radar(radar_df, radar_error_types, section, model_list)
+            # plot_radar(radar_df, radar_error_types, section, model_list)
 
-            # print(f"绘制{section}部分的分数散点图...")
+            print(f"绘制{section}部分的分数散点图...")
             # plot_scores(score_df, section, model_list)
 
-            # print(f"绘制{section}部分的小倍数图...")
+            print(f"绘制{section}部分的小倍数图...")
             # plot_small_multiples(score_df, section, model_list)
 
             # print(f"{section}部分的图表已生成完毕")

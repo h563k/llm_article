@@ -20,7 +20,7 @@ def plot_small_multiples(score_df, section, model_list):
         return []
 
     # 获取模型列表
-    models = score_df['模型'].unique()
+    models = model_list
 
     # 用于存储不达标的模型
     underperforming_models = []
