@@ -1,5 +1,6 @@
 import pandas as pd
 from functionals.system_config import ModelConfig
+from plot.config import get_label
 
 
 def load_data():
@@ -16,11 +17,11 @@ def load_data():
 
     # 读取正文数据
     content_df = pd.read_excel(f'{file_path}/data/final_count/content.xlsx')
-    
+
     # 读取参考文献数据
     reference_df = pd.read_excel(
         f'{file_path}/data/final_count/reference.xlsx')
-    
+
     # 假设content_df已加载
     chinese_abstract_df = content_df[content_df['统计类型'] == '中文摘要']
     content_df = content_df[content_df['统计类型'] == '正文']
@@ -34,20 +35,21 @@ def load_data():
 
 
 def get_error_columns(section):
-    assert section in ['英文摘要', '正文', '参考文献', '中文摘要'], "section参数必须是英文摘要、正文或参考文献"
+    assert section in ['英文摘要', '正文', '参考文献',
+                       '中文摘要'], "section参数必须是英文摘要、正文或参考文献"
     # 错误类型列表 (基于示例数据中的列名)
     if section == '英文摘要':
-        error_columns = ['句式错误', '语法错误', '拼写词汇错误',
-                         '术语使用错误', '格式规范错误', '数字单位错误', '空格使用错误']
+        error_columns = ['拼写错误', '句式与结构错误', '标点符号错误',
+                         '术语与表达规范', '数字与单位错误', '格式与排版错误', '逻辑与科学性错误']
     elif section == '中文摘要':
-        error_columns = ['句式错误', '语法错误', '用词不当',
-                         '错别字', '标点符号', '重复冗余', '逻辑问题', '术语规范']
+        error_columns = ['语法与结构错误', '用词不当', '错别字', '标点符号错误',
+                         '数字与单位错误', '排版格式错误', '术语系统问题', '重复冗余', '逻辑不清']
     elif section == '正文':
-        error_columns = ['句式错误', '语法错误', '用词不当',
-                         '错别字', '标点符号', '重复冗余', '逻辑问题', '术语规范']
+        error_columns = ['语法与结构错误', '用词不当', '错别字', '标点符号错误',
+                         '数字与单位错误', '排版格式错误', '术语系统问题', '重复冗余', '逻辑不清']
     elif section == '参考文献':
-        error_columns = ['作者信息错误或不规范', '期刊或书籍名称格式问题', '文献类型混淆', '出版年与其他细节不一致',
-                         'DOI与其他信息遗漏或错误', '参考文献顺序错误', '中文和英文标点符号混用', '重复引用与排版问题', '页码与文章编号问题']
+        error_columns = ['作者著录规范问题', '题名内容与格式问题', '文献类型标识错误', '出版信息完整性问题',
+                         '数字标识系统规范', '引用排序与编号问题', '标点符号语言环境规范', '重复引用与版本控制', '排版技术细节规范']
     return error_columns
 
 

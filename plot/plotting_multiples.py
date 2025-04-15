@@ -4,7 +4,7 @@ from plot.config import get_label
 from plot.utils import get_output_path
 
 
-def plot_small_multiples(score_df, section):
+def plot_small_multiples(score_df, section, model_list):
     """
     为每个模型绘制单独的小图，以更清晰地显示分数分布
 
@@ -83,7 +83,7 @@ def plot_small_multiples(score_df, section):
             title_color = 'red'
         else:
             title_color = 'black'
-            
+
         # 打印不达标的模型
         if underperforming_models:
             print(f"\n警告: 以下模型的ROUGE不达标")
@@ -107,7 +107,7 @@ def plot_small_multiples(score_df, section):
             title_color = 'red'
         else:
             title_color = 'black'
-            
+
         # 打印不达标的模型
         if underperforming_models:
             print(f"\n警告: 以下模型的BERT分数不达标")
@@ -177,6 +177,5 @@ def plot_small_multiples(score_df, section):
 
     plt.close(fig_rouge)
     plt.close(fig_bert)
-
 
     return underperforming_models

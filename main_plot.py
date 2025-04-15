@@ -11,8 +11,21 @@ from plot.plotting_scores import plot_scores
 from plot.plotting_multiples import plot_small_multiples
 from plot.utils import ensure_output_dir, output_clean
 
+model_list = ['gpt-3.5-turbo',
+              'yi-large',
+              'GLM-4-Air-0111',
+              'ernie-3.5-128k',
+              'moonshot-v1-auto',
+              'qwen2.5-72b-instruct',
+              'doubao-1-5-pro-32k-250115',
+              'gpt-4o-2024-08-06',
+              'gpt-4o-mini',
+              'deepseek-v3',
+              'deepseek-r1',
+              'qwq-32b-preview',]
 
-def plot_all_charts():
+
+def plot_all_charts(model_list):
     """
     为所有部分绘制所有图表
     """
@@ -52,19 +65,18 @@ def plot_all_charts():
             score_df = prepare_score_data(df, section)
 
             print(f"绘制{section}部分的箱体图...")
-            plot_boxplots(error_df, error_types, section)
+            # plot_boxplots(error_df, error_types, section, model_list)
 
             print(f"绘制{section}部分的雷达图...")
-            plot_radar(radar_df, radar_error_types, section)
+            plot_radar(radar_df, radar_error_types, section, model_list)
 
             # print(f"绘制{section}部分的分数散点图...")
-            # plot_scores(score_df, section)
+            # plot_scores(score_df, section, model_list)
 
-            print(f"绘制{section}部分的小倍数图...")
-            plot_small_multiples(score_df, section)
+            # print(f"绘制{section}部分的小倍数图...")
+            # plot_small_multiples(score_df, section, model_list)
 
-            print(f"{section}部分的图表已生成完毕")
-    
+            # print(f"{section}部分的图表已生成完毕")
 
         print(f"所有图表绘制完成！请在 {output_dir} 目录中查看")
 
@@ -77,4 +89,4 @@ def plot_all_charts():
 # 主函数
 if __name__ == "__main__":
     # 绘制所有图表
-    plot_all_charts()
+    plot_all_charts(model_list)
