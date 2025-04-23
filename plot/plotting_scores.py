@@ -31,7 +31,9 @@ def plot_scores(score_df, section, model_list):
 
         # 用于趋势线的x范围
         x_range = np.linspace(min(score_df['总长度']), max(score_df['总长度']), 100)
-
+        # 获取ROUGE和BERT分数的最小值
+        rouge_min = score_df['ROUGE分数'].min()
+        bert_min = score_df['BERT分数'].min()
         # 绘制ROUGE分数散点图
         for i, model in enumerate(model_group):
             model_data = score_df[score_df['模型'] == model]
@@ -67,7 +69,7 @@ def plot_scores(score_df, section, model_list):
             f"{get_label(section)} - ROUGE {get_label('分数分布图')}{group_suffix}", fontsize=16, pad=15)
         axes[0].set_xlabel(get_label('字数'), fontsize=14)
         axes[0].set_ylabel("ROUGE Score", fontsize=14)  # 保持英文以避免字体问题
-        axes[0].set_ylim(0, 1.0)
+        axes[0].set_ylim(rouge_min, 1.0)
 
         # 改进网格线和背景
         axes[0].grid(True, linestyle='--', alpha=0.4)
@@ -117,7 +119,7 @@ def plot_scores(score_df, section, model_list):
             f"{get_label(section)} - BERT {get_label('分数分布图')}{group_suffix}", fontsize=16, pad=15)
         axes[1].set_xlabel(get_label('字数'), fontsize=14)
         axes[1].set_ylabel("BERT Score", fontsize=14)  # 保持英文以避免字体问题
-        axes[1].set_ylim(0, 1.0)
+        axes[1].set_ylim(bert_min, 1.0)
 
         # 改进网格线和背景
         axes[1].grid(True, linestyle='--', alpha=0.4)

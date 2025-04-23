@@ -24,12 +24,13 @@ def plot_boxplots(error_df, error_types, section, model_list):
         group_df = error_df[error_df['模型'].isin(model_group)]
         # 为每种错误类型创建一个子图
         fig, axes = plt.subplots(
-            len(error_types), 1, figsize=(14, 6 * len(error_types)))
+            len(error_types), 1, figsize=(14, 4 * len(error_types)))
         if len(error_types) == 1:
             axes = [axes]
 
         # 设置自定义配色方案
-        palette = sns.color_palette("viridis", n_colors=len(model_group))  # 按当前分组模型数量生成
+        palette = sns.color_palette(
+            "viridis", n_colors=len(model_group))  # 按当前分组模型数量生成
 
         for i, error_type in enumerate(error_types):
             # 筛选当前错误类型的数据
@@ -41,6 +42,10 @@ def plot_boxplots(error_df, error_types, section, model_list):
                 axes[i].text(0.5, 0.5, f"No data for {get_label(error_type)}",
                              horizontalalignment='center', verticalalignment='center')
                 continue
+
+            # 去掉异常值，主要是明显过大的部分
+            upper_bound = df_current['错误率'].quantile(0.9)
+            df_current = df_current[(df_current['错误率'] <= upper_bound)]
 
             # 绘制箱体图 (更美观) - 修复警告：使用hue参数而不是直接传递palette
             sns.boxplot(
@@ -56,21 +61,24 @@ def plot_boxplots(error_df, error_types, section, model_list):
                 legend=False,  # 不显示图例，因为我们只想用模型名称作为y轴标签
                 whis=1.0,  # 缩小异常值判定范围，默认是1.5
                 showfliers=False,  # 新增参数，关闭异常值显示
+                boxprops={'alpha': 0.5},  # 新增透明度设置 (0-1之间调整)
+                zorder=2  # 设置箱体在底层
             )
-
-            # 添加数据点 (半透明) - 修复警告：使用hue参数而不是直接传递palette
             sns.stripplot(
                 x='错误率',
                 y='模型',
                 hue='模型',  # 添加hue参数
                 data=df_current,
                 ax=axes[i],
-                size=4,  # 减小点大小
-                alpha=0.4,  # 增加透明度
-                palette=palette,
-                jitter=True,  # 添加抖动效果，避免重叠
-                dodge=True,  # 与箱体分开显示
-                legend=False  # 不显示图例，避免重复
+                size=6,  # 减小点大小
+                alpha=0.9,  # 增加透明度
+                palette='dark:peru',
+                marker='o',  # 空心圆圈
+                edgecolor='peru',  # 边框颜色
+                jitter=0.05,  # 仅水平抖动
+                dodge=False,  # 与箱体分开显示
+                legend=False,  # 不显示图例，避免重复
+                zorder=3  # 设置散点在顶层
             )
 
             # 设置标题和标签
@@ -78,9 +86,12 @@ def plot_boxplots(error_df, error_types, section, model_list):
                 f"{get_label(section)} - {get_label(error_type)} {get_label('分布')}", fontsize=14, pad=15)
             axes[i].set_xlabel(get_label('错误率'), fontsize=12)
             axes[i].set_ylabel(get_label('模型'), fontsize=12)
-            # 新增百分比格式化 (添加这行代码)
-            axes[i].xaxis.set_major_formatter(
-                FuncFormatter(lambda x, _: f'{x*1000:.1f}‰'))
+            if section == '正文':
+                axes[i].xaxis.set_major_formatter(
+                    FuncFormatter(lambda x, _: f'{x*10000:.1f}‱'))
+            else:
+                axes[i].xaxis.set_major_formatter(
+                    FuncFormatter(lambda x, _: f'{x*1000:.1f}‰'))
 
             # 改进网格线
             axes[i].grid(axis='x', linestyle='--', alpha=0.7)
@@ -88,8 +99,11 @@ def plot_boxplots(error_df, error_types, section, model_list):
 
             # 设置x轴范围，确保从0开始
             max_error = df_current['错误率'].max()
-            axes[i].set_xlim(-0.001, max_error * 1.05)
-
+            # 正确的设置顺序（在所有绘图操作之后设置）
+            # 先绘制所有元素...
+            # 最后设置坐标范围
+            axes[i].set_xlim(left=0, right=max_error * 1.05)  # 显式指定参数
+            # axes[i].autoscale_view(scalex=False)  # 关闭自动缩放
             # 添加平均值文本
             for j, model in enumerate(df_current['模型'].unique()):
                 model_mean = df_current[df_current['模型']

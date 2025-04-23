@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.font_manager as fm
-import platform
 
 # 设置中文字体支持
 
@@ -17,10 +16,17 @@ def configure_fonts():
     mpl.rcParams['grid.alpha'] = 0.3
     mpl.rcParams['grid.linestyle'] = '--'
     
-    # 强制重新加载字体
-    plt.rcParams['font.family'] = 'sans-serif'
-    plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'DejaVu Sans']
+    # # 强制重新加载字体
+    # plt.rcParams['font.family'] = 'sans-serif'
+    # plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'SimHei']
+    
+    # 指定字体文件的完整路径
+    font_path = '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc'  # 替换为您的字体文件路径
+    prop = fm.FontProperties(fname=font_path)
 
+    # 设置Matplotlib默认字体
+    plt.rcParams['font.family'] = prop.get_name()
+    plt.rcParams['axes.unicode_minus'] = False  # 解决负号'-'显示为方块的问题
 
 # 自定义函数：使用英文替代中文标签
 def use_english_labels(use_english):
