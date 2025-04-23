@@ -47,8 +47,6 @@ def plot_all_charts(model_list):
         sections = list(data_dict.keys())
 
         for section in sections:
-            if section != '正文':
-                continue
             print(f"处理{section}部分的数据...")
             df = data_dict[section]
 
@@ -61,7 +59,7 @@ def plot_all_charts(model_list):
 
             print(f"准备{section}部分的雷达图数据...")
             radar_df, radar_error_types = prepare_radar_data(df, section)
-            print(f"雷达图数据准备完成，包含错误类型: {radar_df}")
+            print(f"雷达图数据准备完成，包含错误类型: {radar_df.columns.tolist()}")
 
             print(f"准备{section}部分的分数数据...")
             score_df = prepare_score_data(df, section)
