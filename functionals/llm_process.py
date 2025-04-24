@@ -7,6 +7,7 @@ from functionals.llm_api import openai_chat
 from functionals.metric import eval
 from functionals.file_list import get_file_list
 from functionals.promot_template import *
+from functionals.diff_to_word import create_word
 
 # TODO增加一个全文英文提取promot
 
@@ -127,11 +128,13 @@ def refine_llm(openai_template, model, database_manager, file_list):
 
 def eval_llm(openai_template, model, database_manager, file_list):
     for file_name in file_list:
+        text_list = []
         sql = f"select * from reference_cache where file_name = '{file_name}' and template = '{openai_template}' and model = '{model}' order by id"
         reference_cache = database_manager.custom(sql)
         for i, reference_cache_item in enumerate(reference_cache):
             _, file_name, template, model, content_tpye, content, reference, _ = reference_cache_item
             print(f'{file_name}的第{i}段内容已开始评价,模型为{model},类型为{content_tpye}')
+            text_list.append([content, reference])
             if not database_manager.get_eval_count(file_name, openai_template, model, content_tpye):
                 if len(reference) > 20:
                     eval_scores = eval(reference, content)
@@ -141,6 +144,7 @@ def eval_llm(openai_template, model, database_manager, file_list):
                     file_name, openai_template, model, content_tpye, eval_scores['rouge_l'], eval_scores['bert_score'])
             else:
                 print(f'{file_name}的第{i}段内容已经评价')
+        create_word(text_list, file_name)
 
 
 def abstract_count(file_name, openai_template, model, abstract_type, system_prompt_compare, database_manager):
