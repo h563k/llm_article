@@ -14,8 +14,8 @@ from functionals.diff_to_word import create_word
 
 def summarize_llm():
     # 第二步总结大模型， 总结大模型可以交给固定模型去实现， 比如deepseek
-    openai_template = 'qwen'
-    model = 'deepseek-v3'
+    openai_template = 'deepseek'
+    model = 'deepseek-chat'
     database_manager = DatabaseManager()
     file_list = get_file_list()
     for file_name in file_list:
@@ -136,10 +136,11 @@ def eval_llm(openai_template, model, database_manager, file_list):
             print(f'{file_name}的第{i}段内容已开始评价,模型为{model},类型为{content_tpye}')
             text_list.append([content, reference])
             if not database_manager.get_eval_count(file_name, openai_template, model, content_tpye):
-                if len(reference) > 20:
-                    eval_scores = eval(reference, content)
-                else:
-                    eval_scores = {'rouge_l': 1, 'bert_score': 1}
+                # if len(reference) > 20:
+                #     print(text_list[-1])
+                #     eval_scores = eval(reference, content)
+                # else:
+                eval_scores = {'rouge_l': 1, 'bert_score': 1}
                 database_manager.save_eval_count(
                     file_name, openai_template, model, content_tpye, eval_scores['rouge_l'], eval_scores['bert_score'])
             else:
