@@ -448,7 +448,7 @@ def SingleProcess(template, model):
     database_manager = DatabaseManager()
     file_list = get_file_list()
     # 第三步逐步处理每一个片段
-    # refine_llm(template, model, database_manager, file_list)
+    refine_llm(template, model, database_manager, file_list)
     # 第四步 统计
     compare_llm(template, model, database_manager, file_list)
 
