@@ -3,6 +3,7 @@ import re
 from functionals.system_config import ModelConfig
 from functionals.save_data import DatabaseManager
 from functionals.standard_log import log_to_file
+from functionals.doc2docx import convert_doc_to_docx
 from docx import Document
 
 
@@ -92,7 +93,10 @@ def DataProcess():
             print(f'{path}为临时文件, 删除')
             continue
         if path.endswith('.doc'):
-            print(f'{path}为doc文件, 请运行文档转换工具')
+            print(f'{path}为doc文件, 开始转换文件')
+            doc_path = os.path.join(original_data, path)
+            docx_path = f'{doc_path}x'
+            convert_doc_to_docx(doc_path, docx_path)
             continue
         if DataBase.get_document(path):
             print(f'{path}已存在, 跳过预处理')
