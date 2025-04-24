@@ -30,7 +30,8 @@ def env_init() -> None:
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(0))
 @log_to_file
 def openai_chat(system_prompt, prompt, openai_template, model):
-    env_init()
+    if config.OpenAI.get('proxy'):
+        env_init()
     api_key = openai_config[openai_template]['api_key']
     base_url = openai_config[openai_template]['base_url']
     client = openai.OpenAI(api_key=api_key, base_url=base_url)
