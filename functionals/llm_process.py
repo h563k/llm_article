@@ -186,7 +186,7 @@ where content_tpye like 'Content%'
 and model = '{model}' and file_name = '{file_name}' order by id"""
         content_list = database_manager.custom(sql)
         for i, content in enumerate(content_list):
-            content =content[6]
+            content = content[6]
             if len(content) < 20:
                 print(f'{file_name}的第{i}段长度过短, 跳过处理')
                 continue
@@ -374,7 +374,7 @@ def aggregation(template, model, database_manager):
         abstract_df = pd.concat([abstract_df, pd.DataFrame.from_dict(
             temp, orient='index').T], ignore_index=True)
     if error_log:
-        with open('logs/error_content.txt', 'a') as f:
+        with open('logs/error_content.txt', 'a', encoding='utf-8') as f:
             for error in error_log:
                 f.write(f'{error[0]}\n{error[1]}\n')
     table.to_excel(f'data/result/{model}_content.xlsx', index=False)
@@ -396,7 +396,7 @@ def reference_count(template, model, database_manager):
         else:
             temp = Reference_list[-1][3].split('\n')
             temp = [x for x in temp if '参考文献' not in x]
-            Reference_count = len(temp) 
+            Reference_count = len(temp)
         Reference_len = sum([len(x[3]) for x in Reference_list])
         sql = f"select * from eval_count where file_name='{file_name}' and model ='{model}' and content_tpye like 'Reference%' order by id"
         Reference_evals = database_manager.custom(sql)
@@ -429,7 +429,7 @@ def reference_count(template, model, database_manager):
             if not reference or reference == '错误类型' or reference.startswith('---') or '无错误' in reference:
                 continue
             if reference in count_dict.keys():
-                count_dict[reference] += 1                
+                count_dict[reference] += 1
             else:
                 score = 0
                 match_key = ''
@@ -462,6 +462,7 @@ def SingleCount(template, model):
     database_manager = DatabaseManager()
     file_list = get_file_list()
     eval_llm(template, model, database_manager, file_list)
+
 
 def SingleAggregation(template, model):
     database_manager = DatabaseManager()

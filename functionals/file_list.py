@@ -8,7 +8,7 @@ def get_file_list():
     db_path = os.path.dirname(db_path)
     db_path = os.path.join(db_path, 'file_list.json')
     file_list = database_manager.get_documents_file_names()
-    with open(db_path, 'r') as f:
+    with open(db_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     for list in file_list:
         if list not in data:

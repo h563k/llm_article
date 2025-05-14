@@ -1,7 +1,10 @@
-data
+*.db
+*.xlsx
+*.doc*
 bert-base-chinese
 test
-config
-logs
+*.yaml
+logs/*
 __pycache__
 *.jpg
+.idea

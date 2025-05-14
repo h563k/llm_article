@@ -42,7 +42,7 @@ def log_to_file(func):
 def debug(json_data, json_name):
     config = ModelConfig()
     now = datetime.now().strftime("%Y%m%d")
-    with open(f"{config.file_path}/logs/debug/{json_name}_{now}.josn", "w") as f:
+    with open(f"{config.file_path}/logs/debug/{json_name}_{now}.josn", "w", encoding='utf-8') as f:
         json.dump(json_data, f, indent=4)
 
 
