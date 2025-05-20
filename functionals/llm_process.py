@@ -346,6 +346,7 @@ def aggregation(template, model, database_manager):
                       '统计类型': '英文摘要',
                       '模型': model,
                       '拼写错误': 0,
+                      '语法错误': 0,
                       '句式与结构错误': 0,
                       '标点符号错误': 0,
                       '术语与表达规范': 0,
